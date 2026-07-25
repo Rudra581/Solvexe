@@ -1,0 +1,22 @@
+{
+  "name": "submission-webhook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run build && node dist/index.js",
+    "build": "npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.0",
+    "@repo/db": "*",
+    "@types/express": "^5.0.6",
+    "express": "^5.2.1",
+    "ioredis": "^5.11.1",
+    "pg": "^8.22.0"
+  }
+}

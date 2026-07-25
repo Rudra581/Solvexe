@@ -1,0 +1,14 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "submission-worker",
+  "license": "ISC",
+  "scripts": {
+    "dev": "npm run build && node dist/index.js",
+    "build": "npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js"
+}

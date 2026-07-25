@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    
+    "target": "ES2022", 
+    /* Modules */
+    "module": "NodeNext", /* Handles both ES Modules and CommonJS correctly for modern setups */
+    "moduleResolution": "NodeNext", /* Allows accurate lookup of package exports across workspace package boundaries */
+    "rootDir": "./src", /* Specify the root folder within your source files */
+    /* Emit */
+    "outDir": "./dist", /* Specify an output folder for all emitted files */
+    "sourceMap": true, /* Generates source map files for reliable error stack traces */
+    "declaration": true, /* Generate .d.ts files for shared package autocompletion */
+    "declarationMap": true, /* Maps declaration errors back to the source .ts file */
+    "removeComments": true, /* Slims down structural output sizes */
+    /* Interop Constraints */
+    "esModuleInterop": true, /* Eases cross-compatibility between CommonJS components and ES6 imports */
+    "forceConsistentCasingInFileNames": true, /* Prevents structural build fails between case-insensitive local OS and Linux Docker */
+    /* Type Checking */
+    "strict": true, /* Enable all strict type-checking options */
+    "noImplicitReturns": true, /* Protects logical loops from missing return execution branches */
+    "noFallthroughCasesInSwitch": true, /* Stops accidental fallthrough flows inside switch cases */
+    "noUncheckedIndexedAccess": true, /* Enhances safety when pulling dynamic data from array indices or hash maps */
+    /* Completeness */
+    "skipLibCheck": true,
+    "types": ["node"] 
+  },
+  
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo"
+  ]
+}

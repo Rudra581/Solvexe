@@ -1,0 +1,26 @@
+{
+  "name": "app",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "sync-problems": "node sync-problems.js"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.6",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@12.0.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

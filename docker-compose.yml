@@ -1,0 +1,73 @@
+services:
+  app:
+    image: node:20
+    networks:
+      - codebox_network_bridge
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web/.next
+    environment:
+      - DATABASE_URL=postgres://e924f6e270f0cbf2e78716c8e77ed8d1b88215707506f690f163cc6b5acf0fa0:sk_dUrUb1NyLhUbGmKyuga_F@pooled.db.prisma.io:5432/postgres?sslmode=require
+      - ACCELERATE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza19PakdiSjRObGNHZVZNVi1HRzhrdkEiLCJhcGlfa2V5IjoiMDFLWEJXOVFaTkM4OFpKRjJDSjlIOVdIVk0iLCJ0ZW5hbnRfaWQiOiJlOTI0ZjZlMjcwZjBjYmYyZTc4NzE2YzhlNzdlZDhkMWI4ODIxNTcwNzUwNmY2OTBmMTYzY2M2YjVhY2YwZmEwIiwiaW50ZXJuYWxfc2VjcmV0IjoiYWRkMDJkMTUtNmNkMC00ODAzLWJkYzktY2M2N2ZhMzUyYjA1In0.IjssbM9VBN0pXaNnbHJipTQcQlSOphQPdmLKUO1evyI
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=my_super_secret_key_123
+      - JWT_SECRET=my_super_secret_key_123
+      - WEBHOOK_SECRET=my_super_secret_key_123
+      - JUDGE0_API_URL=http://host.docker.internal:3005
+      - JUDGE0_CALLBACK_URL=http://app:3001
+      - PORT=3000
+      - HOST=0.0.0.0
+      - WEBHOOK_PORT=3001
+      - RABBITMQ_URL=amqp://guest:guest@dev_rabbitmq:5672
+      - REDIS_URL=redis://dev_redis:6379
+    ports:
+      - "3000:3000" 
+      - "3001:3001" 
+    depends_on:
+      - rabbitmq
+    command: >
+      sh -c "
+        npm install &&
+        cd packages/db &&
+        npx prisma generate &&
+        cd ../../ &&
+        REDIS_URL=redis://dev_redis:6379 RABBITMQ_URL=amqp://guest:guest@dev_rabbitmq:5672 npm run dev
+      "
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: dev_rabbitmq
+    ports:
+      - "5672:5672"   
+      - "15672:15672" 
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - codebox_network_bridge
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  redis:
+    image: redis:7
+    container_name: dev_redis
+    ports:
+      - "6380:6379"
+    command: redis-server --appendonly yes
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - codebox_network_bridge
+    volumes:
+      - redis_data:/data
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+
+networks:
+  codebox_network_bridge:
+    external: true
+    name: codebox_default

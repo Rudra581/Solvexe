@@ -1,0 +1,29 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:seed": "prisma db seed",
+    "db:question": "ts-node prisma/updateQuestion.ts"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^7.9.0",
+    "@prisma/adapter-pg": "^7.9.0",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.9.0",
+    "@types/pg": "^8.20.0"
+  },
+  "exports": {
+    "./client": "./src/index.ts"
+  }
+}
