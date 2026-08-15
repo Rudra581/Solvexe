@@ -32,13 +32,13 @@ export function Appbar() {
       </nav>
 
       {!isLoading && session?.user && (
-        <div className="flex items-center gap-4">
-          <Button onClick={() => signOut()}>Logout</Button>
+        <div className="flex items-center gap-4 ">
+          <Button className="cursor-pointer " onClick={() => signOut()}>Logout</Button>
         </div>
       )}
 
       {!isLoading && !session?.user && (
-        <Button onClick={() => signIn()}>Sign in</Button>
+        <Button className="cursor-pointer" onClick={() => signIn()}>Sign in</Button>
       )}
 
       {isLoading && <div className="flex items-center gap-4"></div>}

@@ -31,15 +31,19 @@ app.put("/submission-callback", async (req, res) => {
   console.log(`[DEBUG] webhook/index.ts - Mapped Judge0 status "${parsedBody.status.description}" to database status: ${statusResult}`);
 
   try {
+    const decodeBase64 = (str: string) => {
+      const decoded = Buffer.from(str, 'base64').toString('utf-8');
+      return decoded.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
+    };
     let judgeOutput = "";
     if (parsedBody.stdout) {
-      judgeOutput = parsedBody.stdout;
+      judgeOutput = decodeBase64(parsedBody.stdout);
     } else if (parsedBody.compile_output) {
-      judgeOutput = parsedBody.compile_output;
+      judgeOutput = decodeBase64(parsedBody.compile_output);
     } else if (parsedBody.stderr) {
-      judgeOutput = parsedBody.stderr;
+      judgeOutput = decodeBase64(parsedBody.stderr);
     } else if (parsedBody.message) {
-      judgeOutput = parsedBody.message;
+      judgeOutput = decodeBase64(parsedBody.message);
     }
 
     // Update the individual test case
@@ -74,13 +78,25 @@ app.put("/submission-callback", async (req, res) => {
         const failedCount = allTestCases.filter((tc) => tc.status !== "AC").length;
         const accepted = failedCount === 0;
 
-        const submission = await tx.submission.update({
-          where: { id: testCase.submissionId },
+        const updateResult = await tx.submission.updateMany({
+          where: {
+            id: testCase.submissionId,
+            status: "PENDING",
+          },
           data: {
             status: accepted ? "AC" : "REJECTED",
             time: Math.max(...allTestCases.map((tc) => Number(tc.time || 0))),
             memory: Math.max(...allTestCases.map((tc) => tc.memory || 0)),
           },
+        });
+
+        if (updateResult.count === 0) {
+          console.log(`[DEBUG] webhook/index.ts - Submission ${testCase.submissionId} already finalized, skipping duplicate.`);
+          return;
+        }
+
+        const submission = await tx.submission.findUniqueOrThrow({
+          where: { id: testCase.submissionId },
           include: {
             problem: true,
             activeContest: true,
@@ -95,6 +111,7 @@ app.put("/submission-callback", async (req, res) => {
               userId: submission.userId,
               problemId: submission.problemId,
               status: "AC",
+              isRun: false,
               id: { not: submission.id }
             }
           });

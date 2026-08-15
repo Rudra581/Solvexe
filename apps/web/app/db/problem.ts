@@ -56,6 +56,7 @@ export const getProblems = async () => {
         where: {
           userId: userId,
           status: "AC",
+          isRun: false,
         },
         take: 1,
       } : false,

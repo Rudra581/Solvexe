@@ -22,7 +22,8 @@ export function ContestCard({
   startTime,
   endTime,
 }: ContestCardParams) {
-  const duration = `${(new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60)} hours`;
+  const durationHours = Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / (1000 * 60 * 60));
+  const duration = `${durationHours} hours`;
   const isActive =
     startTime.getTime() < Date.now() && endTime.getTime() > Date.now();
   const isUpcoming = startTime.getTime() > Date.now();

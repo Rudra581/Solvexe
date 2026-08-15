@@ -10,8 +10,6 @@ import { authOptions } from "../../lib/auth";
 import { addToQueue } from "@repo/queue"
 import redis from "../../lib/redis";
 
-
-// TODO: This should be heavily rate limited
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
@@ -103,43 +101,6 @@ console.log("Incoming Language ID:", submissionInput.data.languageId);
     })),
   });
 
-  // let response;
-  // try {
-  //   response = await axios.post(
-  //     `${JUDGE0_URI}/submissions/batch?base64_encoded=false`,
-  //     {
-  //       submissions: problem.inputs.map((input, index) => ({
-  //         language_id: LANGUAGE_MAPPING[submissionInput.data.languageId]?.judge0,
-  //         source_code: problem.fullBoilerplateCode,
-  //         stdin: input,
-  //         expected_output: problem.outputs[index],
-  //         callback_url:
-  //           `${process.env.JUDGE0_CALLBACK_URL}/submission-callback?secret=${process.env.WEBHOOK_SECRET}`
-  //       })),
-  //     },
-  //     {
-  //       headers: {
-  //         "X-Auth-Token": "dev-token"
-  //       }
-  //     }
-  //   );
-  //   console.log("[DEBUG] submission/route.ts - Received Judge0 response:", JSON.stringify(response.data, null, 2));
-  // } catch (error: any) {
-  //   console.error("[DEBUG] submission/route.ts - Error calling Judge0:", error?.response?.data || error.message);
-  //   return NextResponse.json(
-  //     { message: "Codebox API error", details: error?.response?.data || error.message },
-  //     { status: 500 }
-  //   );
-  // }
-  // await db.testCase.createMany({
-  //   data: problem.inputs.map((input, index) => ({
-  //     submissionId: submission.id,
-  //     status: "PENDING",
-  //     index,
-  //     judge0TrackingId: response.data[index].token,
-  //   })),
-  // });
-
   return NextResponse.json(
     {
       message: "Submission made",
@@ -208,10 +169,10 @@ export async function GET(req: NextRequest) {
 
   if (submission.status === "PENDING") {
     try {
-      console.log(`[DEBUG] GET /api/submission - Submission is PENDING, doing fallback check with Judge0...`);
+      console.log(`Submission is PENDING, doing fallback check `);
       const tokens = testCases.filter((tc: any) => tc.status === "PENDING").map((tc: any) => tc.judge0TrackingId).join(",");
       if (tokens) {
-        const judge0Res = await axios.get(`${JUDGE0_URI}/submissions/batch?tokens=${tokens}&base64_encoded=false&fields=token,status,time,memory`, {
+        const judge0Res = await axios.get(`${JUDGE0_URI}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=token,status,time,memory,stdout,stderr,compile_output,message`, {
           headers: {
             "X-Auth-Token": "dev-token"
           }
@@ -225,7 +186,11 @@ export async function GET(req: NextRequest) {
                 token: sub.token,
                 status: sub.status,
                 time: sub.time,
-                memory: sub.memory
+                memory: sub.memory,
+                stdout: sub.stdout,
+                stderr: sub.stderr,
+                compile_output: sub.compile_output,
+                message: sub.message
               }).catch(e => console.error("Webhook fallback trigger failed:", e.message));
               anyUpdated = true;
             }

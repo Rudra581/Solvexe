@@ -43,12 +43,18 @@ export async function UserProfile() {
   const rankTitle = getRankTitle(rating);
   
   // Fetch solved problems count
-  const solvedCount = await db.submission.count({
+  const solvedSubmissions = await db.submission.findMany({
     where: {
       userId: session.user.id,
       status: "AC",
+      isRun: false,
+    },
+    distinct: ['problemId'],
+    select: {
+      problemId: true,
     }
   });
+  const solvedCount = solvedSubmissions.length;
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-5 mt-8 font-sans">

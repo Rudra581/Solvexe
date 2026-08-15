@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
     where: {
       problemId: problemId,
       userId: session.user.id,
+      isRun: false,
     },
     take: 10,
     include: {

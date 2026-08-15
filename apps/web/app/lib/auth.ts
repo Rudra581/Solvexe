@@ -7,7 +7,9 @@ import { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { JWTPayload, SignJWT, importJWK } from "jose";
 import { Session } from "next-auth";
-
+import { CredentialSchema } from "./auth-schema";
+import Credentials from "next-auth/providers/credentials";
+import { error } from "node:console";
 interface token extends JWT {
   uid: string;
   jwtToken: string;
@@ -61,11 +63,17 @@ export const authOptions = {
         password: { label: "password", type: "password", placeholder: "" },
       },
       async authorize(credentials: any) {
-        const hashedPassword = await bcrypt.hash(credentials.password, 10);
+        const result = CredentialSchema.safeParse(credentials);
+        if (!result.success) {
+            throw new Error("Invalid input type");
+        }
+        const {username ,password } = result.data;
+
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const userDb = await db.user.findFirst({
           where: {
-            email: credentials.username,
+            email: username,
           },
           select: {
             password: true,
@@ -75,7 +83,7 @@ export const authOptions = {
         });
 
         if (userDb) {
-          if (await bcrypt.compare(credentials.password, userDb.password)) {
+          if (await bcrypt.compare(password, userDb.password)) {
             const jwt = await generateJWT({
               id: userDb.id,
             });
@@ -83,7 +91,7 @@ export const authOptions = {
             return {
               id: userDb.id,
               name: userDb.name,
-              email: credentials.username,
+              email: username,
               token: jwt,
             };
           } else {
@@ -94,8 +102,8 @@ export const authOptions = {
           // sign up
           const user = await db.user.create({
             data: {
-              email: credentials.username,
-              name: credentials.username,
+              email: username,
+              name: username,
               password: hashedPassword,
             },
           });
@@ -106,8 +114,8 @@ export const authOptions = {
 
           return {
             id: user.id,
-            name: credentials.username,
-            email: credentials.username,
+            name: username,
+            email: username,
             token: jwt,
           };
         } catch (e) {
