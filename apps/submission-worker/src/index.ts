@@ -31,7 +31,7 @@ async function startWorker() {
                                 callback_url: `${process.env.JUDGE0_CALLBACK_URL}/submission-callback?secret=${process.env.WEBHOOK_SECRET}&base64_encoded=true`,
                             }))
                         },
-                        { headers: { "X-Auth-Token": "dev-token" } }
+                        { headers: { "X-Auth-Token": process.env.JUDGE0_AUTH_TOKEN } }
                     );
 
                     await prismaClient.testCase.createMany({
