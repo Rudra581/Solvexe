@@ -33,7 +33,8 @@ services:
         cd packages/db &&
         npx prisma generate &&
         cd ../../ &&
-        REDIS_URL=redis://dev_redis:6379 RABBITMQ_URL=amqp://guest:guest@dev_rabbitmq:5672 npm run dev
+        REDIS_URL=redis://dev_redis:6379 RABBITMQ_URL=amqp://guest:guest@dev_rabbitmq:5672 npx turbo build && 
+        REDIS_URL=redis://dev_redis:6379 RABBITMQ_URL=amqp://guest:guest@dev_rabbitmq:5672 npx turbo start
       "
 
   rabbitmq:
