@@ -174,7 +174,7 @@ export async function GET(req: NextRequest) {
       if (tokens) {
         const judge0Res = await axios.get(`${JUDGE0_URI}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=token,status,time,memory,stdout,stderr,compile_output,message`, {
           headers: {
-            "X-Auth-Token": "dev-token"
+            "X-Auth-Token": process.env.JUDGE0_AUTH_TOKEN
           }
         });
         let anyUpdated = false;
