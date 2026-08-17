@@ -31,19 +31,16 @@ app.put("/submission-callback", async (req, res) => {
   console.log(`[DEBUG] webhook/index.ts - Mapped Judge0 status "${parsedBody.status.description}" to database status: ${statusResult}`);
 
   try {
-    const decodeBase64 = (str: string) => {
-      const decoded = Buffer.from(str, 'base64').toString('utf-8');
-      return decoded.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
-    };
+    const stripAnsi = (str: string | null) => str ? str.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '') : "";
     let judgeOutput = "";
     if (parsedBody.stdout) {
-      judgeOutput = decodeBase64(parsedBody.stdout);
+      judgeOutput = stripAnsi(parsedBody.stdout);
     } else if (parsedBody.compile_output) {
-      judgeOutput = decodeBase64(parsedBody.compile_output);
+      judgeOutput = stripAnsi(parsedBody.compile_output);
     } else if (parsedBody.stderr) {
-      judgeOutput = decodeBase64(parsedBody.stderr);
+      judgeOutput = stripAnsi(parsedBody.stderr);
     } else if (parsedBody.message) {
-      judgeOutput = decodeBase64(parsedBody.message);
+      judgeOutput = stripAnsi(parsedBody.message);
     }
 
     // Update the individual test case

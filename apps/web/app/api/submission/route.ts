@@ -182,15 +182,16 @@ export async function GET(req: NextRequest) {
           for (const sub of judge0Res.data.submissions) {
             if (sub.status && sub.status.id > 2) {
               console.log(`[DEBUG] Fallback Check: Found finished token ${sub.token} with status ${sub.status.description}. Triggering webhook...`);
+              const decode = (str: string | null) => str ? Buffer.from(str, 'base64').toString('utf-8') : null;
               await axios.put(`http://app:3001/submission-callback?secret=${process.env.WEBHOOK_SECRET}`, {
                 token: sub.token,
                 status: sub.status,
                 time: sub.time,
                 memory: sub.memory,
-                stdout: sub.stdout,
-                stderr: sub.stderr,
-                compile_output: sub.compile_output,
-                message: sub.message
+                stdout: decode(sub.stdout),
+                stderr: decode(sub.stderr),
+                compile_output: decode(sub.compile_output),
+                message: decode(sub.message)
               }).catch(e => console.error("Webhook fallback trigger failed:", e.message));
               anyUpdated = true;
             }
