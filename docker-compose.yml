@@ -18,6 +18,7 @@ services:
       - JWT_SECRET=my_super_secret_key_123
       - WEBHOOK_SECRET=my_super_secret_key_123
       - JUDGE0_API_URL=http://10.0.0.4:3005
+      - JUDGE0_AUTH_TOKEN=${JUDGE0_AUTH_TOKEN:-dev-token}
       - JUDGE0_CALLBACK_URL=http://app:3001
       - PORT=3000
       - HOST=0.0.0.0
