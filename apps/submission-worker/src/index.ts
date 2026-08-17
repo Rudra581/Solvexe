@@ -28,7 +28,7 @@ async function startWorker() {
                                 expected_output: Buffer.from(tc.expectedOutput).toString('base64'),
                                 cpu_time_limit: submission.timeLimit,
                                 memory_limit: submission.memoryLimit,
-                                callback_url: `${process.env.JUDGE0_CALLBACK_URL}/submission-callback?secret=${process.env.WEBHOOK_SECRET}`,
+                                callback_url: `${process.env.JUDGE0_CALLBACK_URL}/submission-callback?secret=${process.env.WEBHOOK_SECRET}&base64_encoded=true`,
                             }))
                         },
                         { headers: { "X-Auth-Token": "dev-token" } }
