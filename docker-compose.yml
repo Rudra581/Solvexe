@@ -13,7 +13,7 @@ services:
     environment:
       - DATABASE_URL=postgres://e924f6e270f0cbf2e78716c8e77ed8d1b88215707506f690f163cc6b5acf0fa0:sk_dUrUb1NyLhUbGmKyuga_F@pooled.db.prisma.io:5432/postgres?sslmode=require
       - ACCELERATE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RfaWQiOjEsInNlY3VyZV9rZXkiOiJza19PakdiSjRObGNHZVZNVi1HRzhrdkEiLCJhcGlfa2V5IjoiMDFLWEJXOVFaTkM4OFpKRjJDSjlIOVdIVk0iLCJ0ZW5hbnRfaWQiOiJlOTI0ZjZlMjcwZjBjYmYyZTc4NzE2YzhlNzdlZDhkMWI4ODIxNTcwNzUwNmY2OTBmMTYzY2M2YjVhY2YwZmEwIiwiaW50ZXJuYWxfc2VjcmV0IjoiYWRkMDJkMTUtNmNkMC00ODAzLWJkYzktY2M2N2ZhMzUyYjA1In0.IjssbM9VBN0pXaNnbHJipTQcQlSOphQPdmLKUO1evyI
-      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_URL=https://solvexe.me
       - NEXTAUTH_SECRET=my_super_secret_key_123
       - JWT_SECRET=my_super_secret_key_123
       - WEBHOOK_SECRET=my_super_secret_key_123
